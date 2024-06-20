@@ -8,13 +8,13 @@ export default function Game() {
     const [lastRoll, setLastRoll] = useState(0);
     const [turnTotal, setTurnTotal] = useState(0);
     const [target, setTarget] = useState(2);
-    // const [winnerMessage, setWinnerMessage] = useState("")
 
     function handleRoll(){
         const roll = Math.floor(Math.random() * 6) + 1;
         setLastRoll(roll);
 
         roll === 1 ? changeTurn() : setTurnTotal(currTotal => currTotal + roll);
+
     }
 
     function handleStick(){
@@ -57,6 +57,9 @@ export default function Game() {
         }
     }
 
+    const newLongGame = () => handleNewGame("long")
+    const newShortGame = () => handleNewGame("short")
+
     return (<div>
         <h1>
             Game Of Pig
@@ -69,24 +72,24 @@ export default function Game() {
         </div>
 
         <div>
-            <button onClick={handleRoll}>
+            <button onClick={isGameInProgress && handleRoll}>
                 Roll
             </button>
             {isGameInProgress ?  <p>{playerTurn}'s turn</p> : <p>{playerTurn} wins</p>}
             <p>Last Roll: {lastRoll}</p>
             <p>Turn total: {turnTotal}</p>
 
-            <button onClick={handleStick}>
+            <button onClick={isGameInProgress && handleStick}>
                 Stick
             </button>
         </div>
 
         <div>
-            <button onClick={() => handleNewGame("long")}>
+            <button onClick={newLongGame}>
             New Game
             </button>
 
-            <button onClick={() => handleNewGame("short")}>
+            <button onClick={newShortGame}>
             New Short Game
             </button>
         </div>
