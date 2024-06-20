@@ -1,10 +1,11 @@
-import { useState } from "react"
+// @ts-check
+import React, { useState } from "react"
 
 export default function Game() {
     const [player1Score, setPlayer1Score] = useState(0)
     const [player2Score, setPlayer2Score] = useState(0)
-    const [playerTurn, setPlayerTurn] = useState("Player 1");
-    const [isGameInProgress, setIsGameInProgress] = useState(true);
+    const [playerTurn, setPlayerTurn] = useState("Player 1"); // 
+    const [isGameInProgress, setIsGameInProgress] = useState(true); //
     const [lastRoll, setLastRoll] = useState(0);
     const [turnTotal, setTurnTotal] = useState(0);
     const [target, setTarget] = useState(2);
@@ -19,11 +20,12 @@ export default function Game() {
 
     function handleStick(){
         if (playerTurn === "Player 1") {
-            setPlayer1Score(currScore => currScore += turnTotal)
+            setPlayer1Score(currScore => currScore + turnTotal)
         }
         if (playerTurn === "Player 2") {
-            setPlayer2Score(currScore => currScore += turnTotal)
+            setPlayer2Score(currScore => currScore + turnTotal)
         }
+        handleEndGame()
         changeTurn();
 
     }
@@ -39,7 +41,10 @@ export default function Game() {
             setTurnTotal(0)
         }
     }
-
+    /**
+     * 
+     * @param {"long" | "short"} gameType 
+     */
     function handleNewGame(gameType) {
         setPlayer1Score(0)
         setPlayer2Score(0)
@@ -72,14 +77,14 @@ export default function Game() {
         </div>
 
         <div>
-            <button onClick={isGameInProgress && handleRoll}>
+            <button onClick={handleRoll}>
                 Roll
             </button>
             {isGameInProgress ?  <p>{playerTurn}'s turn</p> : <p>{playerTurn} wins</p>}
             <p>Last Roll: {lastRoll}</p>
             <p>Turn total: {turnTotal}</p>
 
-            <button onClick={isGameInProgress && handleStick}>
+            <button onClick={handleStick}>
                 Stick
             </button>
         </div>
