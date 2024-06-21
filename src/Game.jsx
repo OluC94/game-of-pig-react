@@ -1,14 +1,14 @@
-// @ts-check
+
 import React, { useState } from "react"
 
 export default function Game() {
     const [player1Score, setPlayer1Score] = useState(0)
     const [player2Score, setPlayer2Score] = useState(0)
     const [playerTurn, setPlayerTurn] = useState("Player 1"); // 
-    const [isGameInProgress, setIsGameInProgress] = useState(true); //
-    const [lastRoll, setLastRoll] = useState(0);
+    const [lastRoll, setLastRoll] = useState(null);
     const [turnTotal, setTurnTotal] = useState(0);
     const [target, setTarget] = useState(2);
+
 
     function handleRoll(){
         const roll = Math.floor(Math.random() * 6) + 1;
@@ -19,24 +19,29 @@ export default function Game() {
     }
 
     function handleStick(){
+        const newP1Score = player1Score + turnTotal;
+        const newP2Score = player2Score + turnTotal;
+
         if (playerTurn === "Player 1") {
-            setPlayer1Score(currScore => currScore + turnTotal)
+            setPlayer1Score(newP1Score)
+            if (newP1Score < target) {
+                changeTurn();
+            }
         }
         if (playerTurn === "Player 2") {
-            setPlayer2Score(currScore => currScore + turnTotal)
+            setPlayer2Score(newP2Score)
+            if (newP2Score < target) {
+                changeTurn();
+            }
         }
-        handleEndGame()
-        changeTurn();
-
     }
 
     function changeTurn(){
-        handleEndGame();
-        if (playerTurn === "Player 1") {
+        if (playerTurn === "Player 1" && !isGameWon()) {
             setPlayerTurn("Player 2")
             setTurnTotal(0)
         }
-        if (playerTurn === "Player 2") {
+        if (playerTurn === "Player 2" && !isGameWon()) {
             setPlayerTurn("Player 1")
             setTurnTotal(0)
         }
@@ -48,22 +53,19 @@ export default function Game() {
     function handleNewGame(gameType) {
         setPlayer1Score(0)
         setPlayer2Score(0)
-        setLastRoll(0)
+        setLastRoll(null)
         setTurnTotal(0)
-        setIsGameInProgress(true);
         setPlayerTurn("Player 1")
         gameType === "long" ? setTarget(100) : setTarget(30)
     }
 
-    function handleEndGame() {
-        if (player1Score >= target || player2Score >= target) {
-            console.log("game won")
-            setIsGameInProgress(false);
-        }
-    }
 
     const newLongGame = () => handleNewGame("long")
     const newShortGame = () => handleNewGame("short")
+
+    function isGameWon(){
+        return player1Score >= target || player2Score >= target;
+    }
 
     return (<div>
         <h1>
@@ -77,14 +79,14 @@ export default function Game() {
         </div>
 
         <div>
-            <button onClick={handleRoll}>
+            <button onClick={handleRoll} disabled={isGameWon()}>
                 Roll
             </button>
-            {isGameInProgress ?  <p>{playerTurn}'s turn</p> : <p>{playerTurn} wins</p>}
+            {isGameWon() ?  <p>{playerTurn} wins</p> : <p>{playerTurn}'s turn </p>}
             <p>Last Roll: {lastRoll}</p>
             <p>Turn total: {turnTotal}</p>
 
-            <button onClick={handleStick}>
+            <button onClick={handleStick} disabled={isGameWon()}>
                 Stick
             </button>
         </div>
